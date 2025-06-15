@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4K YouTube Video Downloader | Premium HD Converter</title>
+    <meta name="description" content="Download YouTube videos in 4K quality instantly. Free online converter with HD MP4 support. Fast, secure service. Scaricare video YouTube Gratis online su pc, Windows e Mac in 4K">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        :root {
+            --primary: #FF4D4D;
+            --secondary: #2ECC71;
+            --background: #0A0A0A;
+            --text: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .branding {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 0rem;
+        }
+
+        .brand-icon-wrapper {
+            position: relative;
+            width: max-content;
+        }
+
+        .brand-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            opacity: 0.3;
+            filter: blur(25px);
+            z-index: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        h1 {
+            font-size: 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+
+        .input-group {
+            margin: 0 0 1rem 0;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .input-group p {
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .input-row {
+            align-items: center;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        input[type="text"] {
+            flex: 1 1 auto;
+            min-width: 300px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text);
+            transition: all 0.3s ease;
+            height: 60px;
+            padding: 1rem 1.25rem;
+        }
+
+        .cta-button {
+            max-width: 200px;
+            margin: 0 auto;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            box-shadow: 0 4px 15px rgba(255,77,77,0.3);
+        }
+
+        input[type="text"]:hover {
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,77,77,0.4);
+        }
+
+        .cta-button:focus {
+            outline: none;
+            box-shadow: 0 4px 15px rgba(255,77,77,0.3);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255,77,77,0.2);
+        }
+
+        .process-steps {
+            position: relative;
+            margin: 4rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            --scroll-progress: 0;
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            height: calc(100% - 120px);
+            width: 2px;
+            background: var(--primary);
+            transform: scaleY(var(--scroll-progress, 0));
+            transform-origin: top;
+            background: var(--primary);
+            z-index: -1;
+            transition: transform 0.8s ease-in-out;
+            will-change: transform;
+            z-index: 0;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 3rem 0;
+            position: relative;
+            text-align: center;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .step-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(255,77,77,0.3);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-item {
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            will-change: transform, opacity;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .feature-item.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg,
+                rgba(255,77,77,0.05) 0%,
+                rgba(46,204,113,0.05) 100%);
+            z-index: -1;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .legal-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .legal-links a {
+            color: var(--text);
+            opacity: 0.7;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.3s ease;
+        }
+
+        .legal-links a:hover {
+            opacity: 1;
+        }
+
+        .loading-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .error {
+            color: var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(255,77,77,0.1);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .success {
+            color: var(--secondary);
+            padding: 1rem;
+            margin: 1rem 0;
+            background: rgba(46,204,113,0.1);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--secondary);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-container {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin: 2rem 0;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            height: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            box-shadow: 0 0 15px rgba(255,77,77,0.3);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .loading-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .loading-icon {
+            position: relative;
+            width: 60px;
+            height: 40px;
+            margin: 0 auto 1rem;
+        }
+
+        .loader-bar {
+            width: 8px;
+            height: 25px;
+            background: var(--primary);
+            position: absolute;
+            bottom: 0;
+            transform-origin: bottom;
+            animation: loader 1.2s ease infinite;
+        }
+
+        .loader-bar:nth-child(2) { left: 16px; animation-delay: 0.2s; }
+        .loader-bar:nth-child(3) { left: 32px; animation-delay: 0.4s; }
+
+        @keyframes loader {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.3); }
+        }
+
+        .progress-track {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.3s ease, background 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            padding: 0 0.5rem;
+        }
+
+        .progress-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .detail-box {
+            background: rgba(0,0,0,0.3);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .detail-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255,77,77,0.2);
+        }
+
+        .detail-box i {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .loading-modal {
+            padding: 2rem;
+        }
+
+        .loading-content {
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-container {
+            width: 100%;
+            min-height: 160px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .progress-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+            min-height: 80px;
+        }
+
+        .detail-box {
+            background: rgba(0,0,0,0.3);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-track {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.8);
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="branding">
+            <div class="brand-container">
+                <div class="brand-icon-wrapper">
+                    <div class="brand-icon">4K</div>
+                    <div class="brand-glow"></div>
+                </div>
+                <h1>
+                    <span class="gradient-text">YouTube Video</span>
+                    <span class="gradient-text">Downloader</span>
+                </h1>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <p style="margin-bottom: 1.5rem; opacity: 0.8; font-size: 0.9rem;">
+                Download YouTube videos in MP4 format with quality up to 4K resolution. Free YouTube video downloader supporting 1080p and HD formats.
+            </p>
+            <form id="downloadForm">
+                <div class="input-row">
+                    <input type="text" name="url" placeholder="Paste YouTube URL here" required>
+                </div>
+                <button type="button" class="cta-button" onclick="showError('Backend logic removed')">
+                    <i class="fas fa-download"></i> Download
+                </button>
+            </form>
+        </div>
+
+        <div class="process-steps">
+            <div class="step-item">
+                <div class="step-number">1</div>
+                <i class="fas fa-link step-icon"></i>
+                <h3>Paste Link</h3>
+                <p>Insert any YouTube video URL</p>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <i class="fas fa-bolt step-icon"></i>
+                <h3>Instant Conversion</h3>
+                <p>Automatic quality detection</p>
+            </div>
+
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <i class="fas fa-cloud-download-alt step-icon"></i>
+                <h3>Download</h3>
+                <p>Get your file in seconds</p>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fas fa-tachometer-alt feature-icon"></i>
+                <h3>Lightning Fast</h3>
+                <p>Optimized servers for instant conversions</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-lock feature-icon"></i>
+                <h3>Secure Processing</h3>
+                <p>Encrypted transfers and safe handling</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-certificate feature-icon"></i>
+                <h3>Premium Quality</h3>
+                <p>4K resolution & HD audio preservation</p>
+            </div>
+        </div>
+
+        <div id="errorMessage" class="error"></div>
+        <div id="successMessage" class="success"></div>
+
+        <footer>
+            <div class="legal-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/contact">Contact Us</a>
+            </div>
+            <p style="margin-top: 1rem; opacity: 0.6;">© 2023 4K Video Grabber. Free service for non-commercial use.</p>
+        </footer>
+    </div>
+
+    <script>
+        // UI Helpers
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.innerHTML = `✅ ${message}`;
+            successDiv.style.display = 'block';
+            setTimeout(() => successDiv.style.display = 'none', 5000);
+        }
+
+        // Scroll Animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const stepsSection = document.querySelector('.process-steps');
+
+            function smoothUpdateTimeline() {
+                const steps = document.querySelectorAll('.step-item');
+                const sectionTop = stepsSection.getBoundingClientRect().top;
+                const sectionBottom = stepsSection.getBoundingClientRect().bottom;
+                const triggerPoint = window.innerHeight * 0.8;
+
+                if (sectionTop < triggerPoint && sectionBottom > 0) {
+                    let activeStep = -1;
+                    steps.forEach((step, index) => {
+                        const stepTop = step.getBoundingClientRect().top;
+                        if (stepTop < window.innerHeight * 0.7) {
+                            activeStep = index;
+                        }
+                    });
+
+                    if (activeStep >= 0) {
+                        const STEP_POSITIONS = [0.1, 0.5, 0.9];
+                        stepsSection.style.setProperty('--scroll-progress', STEP_POSITIONS[activeStep]);
+                    } else {
+                        stepsSection.style.setProperty('--scroll-progress', 0);
+                        steps.forEach(step => step.classList.remove('visible'));
+                    }
+
+                    steps.forEach((step, index) => {
+                        step.classList.toggle('visible', index <= activeStep);
+                    });
+                }
+                requestAnimationFrame(smoothUpdateTimeline);
+            }
+
+            stepsSection.style.setProperty('--scroll-progress', 0);
+            smoothUpdateTimeline();
+
+            // Feature observer
+            const featureObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.transitionDelay = `${index * 0.2}s`;
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                root: null,
+                rootMargin: '0px 0px -20% 0px',
+                threshold: 0.1
+            });
+
+            document.querySelectorAll('.feature-item').forEach(el => {
+                featureObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
